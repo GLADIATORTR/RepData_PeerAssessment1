@@ -14,15 +14,17 @@ This assisgnment consists of 5 parts that are performed below:
 **1) Loading and preprocessing the data:**
 **Data is loaded from a zip file which already comes in tidy data frame format.**
 
-```{r}
+
+```r
 data <- read.csv(unz("activity.zip", "activity.csv"))
-```  
+```
 
 **2) Finding mean of total number of steps taken per day:**  
 **In this step an histogram of total number of steps per day is created.**
 **Mean and Median is shown below the histogram.**  
 
-```{r}
+
+```r
 #Subset sum of Steps per day by date
 stepsperday<-aggregate(data$steps,data["date"],sum,na.rm=TRUE)
 
@@ -35,8 +37,10 @@ abline(v=mean_val,col="red")
 rug(stepsperday[[2]])
 ```
 
-  **Median of the steps taken per day is: `r med_val` (black line)**  
-  **Mean of the steps taken per day is: `r mean_val` (<span style="color:red">red</span> line) **
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2.png) 
+
+  **Median of the steps taken per day is: 10395 (black line)**  
+  **Mean of the steps taken per day is: 9354.2295 (<span style="color:red">red</span> line) **
 
 
 **3) Finding the average daily activity pattern:**  
@@ -44,7 +48,8 @@ rug(stepsperday[[2]])
 **The interval of when the maximum number of steps occur is shown below the plot.**
 
 
-```{r}
+
+```r
 #Subset average of Steps per day by interval
 avgstepsperint<-aggregate(data$steps,data["interval"],FUN=mean,na.rm=TRUE)
 #Create a time-series plot
@@ -53,17 +58,19 @@ plot(avgstepsperint,type="l",ylab="Average steps per interval",main="Time Series
 max_steps<-max(avgstepsperint[[2]])
 max_int<-as.numeric(avgstepsperint[which.max(avgstepsperint[[2]]),][1])
 abline(v=max_int,col="red")
-
 ```
+
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
   
-  **Maximum steps taken per interval is: `r max_steps`**  
-  **This number is reached at interval: `r max_int` identified by the <span style="color:red">red</span> line**  
+  **Maximum steps taken per interval is: 206.1698**  
+  **This number is reached at interval: 835 identified by the <span style="color:red">red</span> line**  
 
 
 **4a) Imputing missing values:**
 **A simple method of taking the mean values of 5-minute intervals is used to fill in the missing NAs.**  
 
-```{r}
+
+```r
 #Number of rows with missing values are calculated
 na_count<-nrow(data[is.na(data$steps)==TRUE,])
 #Create a copy and impute NAs
@@ -74,7 +81,7 @@ merged_d1d2<-merge(data_na,data_avgintv)
 data_copy[is.na(data$steps)==TRUE,1]<-merged_d1d2$x
 ```
 
-**There were a total of <span style="color:red">`r na_count`</span> NAs before the imputing process. **
+**There were a total of <span style="color:red">2304</span> NAs before the imputing process. **
 
 
 **4b) Creating the histogram of the data with corrected NAs:**  
@@ -83,7 +90,8 @@ data_copy[is.na(data$steps)==TRUE,1]<-merged_d1d2$x
 **It is observed that imputing the NAs normalized the data.**  
 
 
-```{r}
+
+```r
 #Subset sum of Steps per day by date
 stepsperday<-aggregate(data_copy$steps,data_copy["date"],sum,na.rm=TRUE)
 
@@ -96,8 +104,10 @@ abline(v=mean_val,col="red")
 rug(stepsperday[[2]])
 ```
 
-  **Median of the steps taken per day is: `r med_val` (black line)**  
-  **Mean of the steps taken per day is: `r mean_val` (<span style="color:red">red</span> line)** 
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
+
+  **Median of the steps taken per day is: 1.1015 &times; 10<sup>4</sup> (black line)**  
+  **Mean of the steps taken per day is: 1.0766 &times; 10<sup>4</sup> (<span style="color:red">red</span> line)** 
 
 **The overall impact of imputing missing data resulted in:**  
 i)an increase in both median and mean.  
@@ -108,7 +118,8 @@ ii)closed the gap between mean and median "normalizing" the distribution.
 **It is observed that people tend to be active early on in the day**  
 **on weekdays compared to weekends. However, overall people are more active in the weekends.**  
 
-```{r}
+
+```r
 #Subset sum of Steps per day by date
 library(lubridate)
 data_copy$weekday<-weekdays(ymd(data_copy$date))
@@ -123,17 +134,16 @@ data_avgbyw <- setNames(data_avgbyw,c("interval", "weekday","avg_steps"))
 #Create the panel plot
 library(lattice)
 xyplot(avg_steps~interval|weekday,data=data_avgbyw,layout=c(1,2),ylab="Average Number of Steps",main="Avg. Number of Steps Per Interval by Weekday/Weekend",type="l")
-
-
-
 ```
+
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
 
 **Summary**
 **By analysing the activity monitoring data it is observed that:**  
 i)People tend to be more active at certain time intervals during each day.  
 ii)The activity trends are different between weekends vs weekdays.  
 iii)The activity tends to represent a normal distribution with an average of ~11K steps/day.  
-iv)The average steps per interval peaks for interval `r max_int` ,with `r max_steps` steps.   
+iv)The average steps per interval peaks for interval 835 ,with 206.1698 steps.   
 
 
 
